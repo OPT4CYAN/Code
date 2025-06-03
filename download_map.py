@@ -41,7 +41,7 @@ def download_map (date,download_dir,opt)->float:
       end_date = date
       data_collection = "SENTINEL-2"
       aoi = "POINT(-6.41%2036.950)"
-      keycloak_token = get_keycloak("opt4cyanproject@gmail.com", "Opt4cyan_2024")
+      keycloak_token = get_keycloak("***user***", "***password**")
       
       json_key = requests.get(f"https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Attributes/OData.CSC.DoubleAttribute/any(att:att/Name eq 'cloudCover' and att/OData.CSC.DoubleAttribute/Value lt 30.00) and Attributes/OData.CSC.StringAttribute/any(att:att/Name eq 'productType' and att/OData.CSC.StringAttribute/Value eq 'S2MSI1C') and OData.CSC.Intersects(area=geography%27SRID=4326;{aoi}%27) and ContentDate/Start gt {start_date}T00:00:00.000Z and ContentDate/Start lt {end_date}T23:59:59.000Z").json()
       #sin covertura de nubes es el siguiente
@@ -56,7 +56,7 @@ def download_map (date,download_dir,opt)->float:
           if len(filtered_S2A) >0:
               for i in range(len(filtered_S2A)):
                   code = ID[i]
-                  #keycloak_token = get_keycloak("opt4cyanproject@gmail.com", "Opt4cyan_2024")
+                  #keycloak_token = get_keycloak("***user***", "***password**")
                   session = requests.Session()
                   session.headers.update({'Authorization': f'Bearer {keycloak_token}'})
                   url = f"https://catalogue.dataspace.copernicus.eu/odata/v1/Products({code})/$value"
@@ -78,7 +78,7 @@ def download_map (date,download_dir,opt)->float:
           if len(filtered_S2B) >0:
              for i in range(len(filtered_S2B)):
                  code = ID[i]
-                 #keycloak_token = get_keycloak("opt4cyanproject@gmail.com", "Opt4cyan_2024")
+                 #keycloak_token = get_keycloak("***user***", "***password**")
                  session = requests.Session()
                  session.headers.update({'Authorization': f'Bearer {keycloak_token}'})
                  url = f"https://catalogue.dataspace.copernicus.eu/odata/v1/Products({code})/$value"
@@ -127,7 +127,7 @@ def download_map (date,download_dir,opt)->float:
         end_date = date
         data_collection = "SENTINEL-2"
         aoi = "POINT(-6.41%2036.950)"
-        keycloak_token = get_keycloak("opt4cyanproject@gmail.com", "Opt4cyan_2024")
+        keycloak_token = get_keycloak("***user***", "***password**")
         
         json_key = requests.get(f"https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Attributes/OData.CSC.DoubleAttribute/any(att:att/Name eq 'cloudCover' and att/OData.CSC.DoubleAttribute/Value lt 30.00) and Attributes/OData.CSC.StringAttribute/any(att:att/Name eq 'productType' and att/OData.CSC.StringAttribute/Value eq 'S2MSI2A') and OData.CSC.Intersects(area=geography%27SRID=4326;{aoi}%27) and ContentDate/Start gt {start_date}T00:00:00.000Z and ContentDate/Start lt {end_date}T23:59:59.000Z").json()
         #sin covertura de nubes es el siguiente
@@ -142,7 +142,7 @@ def download_map (date,download_dir,opt)->float:
             if len(filtered_S2A) >0:
                 for i in range(len(filtered_S2A)):
                     code = ID[i]
-                    #keycloak_token = get_keycloak("opt4cyanproject@gmail.com", "Opt4cyan_2024")
+                    #keycloak_token = get_keycloak("***user***", "***password**")
                     session = requests.Session()
                     session.headers.update({'Authorization': f'Bearer {keycloak_token}'})
                     url = f"https://catalogue.dataspace.copernicus.eu/odata/v1/Products({code})/$value"
@@ -164,7 +164,7 @@ def download_map (date,download_dir,opt)->float:
             if len(filtered_S2B) >0:
                for i in range(len(filtered_S2B)):
                    code = ID[i]
-                   #keycloak_token = get_keycloak("opt4cyanproject@gmail.com", "Opt4cyan_2024")
+                   #keycloak_token = get_keycloak("***user***", "***password**")
                    session = requests.Session()
                    session.headers.update({'Authorization': f'Bearer {keycloak_token}'})
                    url = f"https://catalogue.dataspace.copernicus.eu/odata/v1/Products({code})/$value"
