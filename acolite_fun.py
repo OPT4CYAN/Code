@@ -32,7 +32,7 @@ def acolite_fun (root_dir:str)->str:
             descomprimir_archivo(i, tmp)
             #T-mart funtion
             file_tmart  = glob.glob(tmp+"*.SAFE")[0]
-            tmart.AEC.run(file_tmart,'opt4cyan','Opt4cyan_2024',overwrite=True)
+            tmart.AEC.run(file_tmart,"***user***", "***password**",overwrite=True)
             print ('tmart  Complete ####################################')
         
             # create folder
