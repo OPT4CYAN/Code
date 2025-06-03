@@ -11,6 +11,7 @@ import glob
 import os
 import pathlib
 from mndwi_fun import mndwi_fun
+from qwip_fun import qwip_fun
 from datetime import datetime,timedelta
 def bands_fun (root_dir)->str:
     def descomprimir_archivo(archivo_zip, directorio_destino):
@@ -38,9 +39,9 @@ def bands_fun (root_dir)->str:
             # create folder
           
             dir_safe            = glob.glob(tmp+"/*")[0]
+            base_name           = os.path.basename(dir_safe)[:3]
             name                =os.path.basename(dir_safe[:dir_safe.find('.SAFE')])
             # Reemplaza con tu fecha almacenada
-        
             ruta_safe           = glob.glob(tmp + "/*")
             ruta_safe           = ruta_safe[0]
     
@@ -55,15 +56,46 @@ def bands_fun (root_dir)->str:
             dir_bands           = dir_bands + folder_in + "/IMG_DATA/"
             
             #dir bandas
+            
+            # 490
+            dir_b02            = glob.glob(dir_bands + "R20m/" + "*B02_20m.jp2")[0]
             #560
             dir_b03             = glob.glob(dir_bands + "R20m/" + "*B03_20m.jp2")[0]
+            #665
+            dir_b04             = glob.glob(dir_bands + "R20m/" + "*B04_20m.jp2")[0]
             # 1600
             dir_b11             = glob.glob(dir_bands + "R20m/" + "*B11_20m.jp2")[0]
-           
             
             mndwi_stations      = mndwi_fun(dir_b03, dir_b11)
+            
+            try:
+                #443
+                dir_b01             = glob.glob(dir_bands + "R20m/" + "*B01_20m.jp2")[0]
+                qwip_stations       = qwip_fun(dir_b01,dir_b02,dir_b03,dir_b04)
             #ndwi_stations       = ndwi_fun(dir_b03_10, dir_b08_10)
             #swi_stations        = swi_fun(dir_b05, dir_b11)
+            
+            
+                
+    # Abrir el archivo actual en modo append (añadir al final)
+            except:
+                print('NOT b01 ...............NO')
+                #443
+                dir_b01             = glob.glob(dir_bands + "R60m/" + "*B01_60m.jp2")[0]
+                # 490
+                dir_b02            = glob.glob(dir_bands + "R60m/" + "*B02_60m.jp2")[0]
+                #560
+                dir_b03             = glob.glob(dir_bands + "R60m/" + "*B03_60m.jp2")[0]
+                #665
+                dir_b04             = glob.glob(dir_bands + "R60m/" + "*B04_60m.jp2")[0]
+                
+                
+                qwip_stations       = qwip_fun(dir_b01,dir_b02,dir_b03,dir_b04)
+            #ndwi_stations       = ndwi_fun(dir_b03_10, dir_b08_10)
+            #swi_stations        = swi_fun(dir_b05, dir_b11)
+           
+            
+            
            
             
     ######## guardar los datos en doc
@@ -80,20 +112,17 @@ def bands_fun (root_dir)->str:
                    Today.writelines(appended)
                    print("Operación completada sin errores.")
         
-            Today               = root_dir + "Today_mndwi.dat"
-            backup           = root_dir + "backup_mndwi.dat"
-            if len(glob.glob(Today))==0:
-                with open(Today, 'w') as archivo:
-                    archivo.write("Doy;Santa_Olalla;Lucio_del_Rey;Hondon_del_Burro;Fuente_del_Duque\n")
-                open(backup,'w')
-                shutil.copy(Today, backup) 
-            
-            shutil.copy(Today, backup)
+            Today               = root_dir + "mndwi.dat"
                 
             appended            = [ str(doy) + ";"  +str(mndwi_stations['Santa_Olalla'])+";"  +str(mndwi_stations['Lucio_del_Rey'])+";"  +str(mndwi_stations['Hondon_del_Burro'])+";"  +str(mndwi_stations['Fuente_del_Duque'])+"\n"]
             c_m_arch(Today,appended)
-        # Abrir el archivo actual en modo append (añadir al final)
-     
+            
+            Today               = root_dir + "qwip.dat"
+                
+            appended            = [ str(doy) + ";"  +str(qwip_stations['Santa_Olalla'])+";"  +str(qwip_stations['Lucio_del_Rey'])+";"  +str(qwip_stations['Hondon_del_Burro'])+";"  +str(qwip_stations['Fuente_del_Duque'])+"\n"]
+            c_m_arch(Today,appended)
+            
+            
             eliminar_carpeta_safe(tmp)
 
         except Exception as e:

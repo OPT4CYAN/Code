@@ -12,7 +12,7 @@ from index_alg import index_alg
 def index_run (output_dir)->str:
 
     #abrimos el archivo hecho por el grupo 1
-    with open(output_dir + "rrs_Today.dat", "r") as rrs_doc:
+    with open(output_dir + "rrs.dat", "r") as rrs_doc:
         lines = rrs_doc.readlines()
  
     # Procesar las líneas y dividirlas por ';'
@@ -37,7 +37,7 @@ def index_run (output_dir)->str:
         with open(Today, 'a') as Today:
             Today.writelines(appended)
     
-    Today                               = output_dir+ "index_Today" +".dat"
+    Today                               = output_dir+ "index" +".dat"
     title                               =["ID","Year","Doy"] 
     
     with open(Today, 'w') as archivo:

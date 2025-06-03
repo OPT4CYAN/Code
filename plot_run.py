@@ -60,12 +60,12 @@ def plot_run (dir_input,today,site,sentinel_dir,web_dir)->str:
         chl_name=['Chla_NDCI', 'Chla_G08', 'chla_OC4Me', 'CHL_m', 'CHL2D_m', 'CHL2C_m', 'CHL_P', 'CHL2_P']
         pcu_name=['PC_D', 'PC_SY', 'PC_S', 'PC_RV', 'PC_H3', 'PC_H1b',  'PC_L', 'PC_Br2' ]
         chl_temp = [index_all[var] for var in chl_name]
-        chl_all = np.nanmean(chl_temp, axis=0)
+        chl_all = np.nanmedian(chl_temp, axis=0)
         chl_std= np.nanstd(chl_temp,axis=0)
         dirs_data['ndci_'+dic] = index_all['NDCI']
         
         pcu_temp = [index_all[var] for var in pcu_name]
-        pcu_all = np.nanmean(pcu_temp, axis=0)
+        pcu_all = np.nanmedian(pcu_temp, axis=0)
         pcu_std = np.nanstd(pcu_temp,axis=0)
         dirs_data['pcu_'+dic]=pcu_all
         dirs_data['pcustd_'+dic]=pcu_std
@@ -80,7 +80,7 @@ def plot_run (dir_input,today,site,sentinel_dir,web_dir)->str:
     #all
     ##############################################################################
     rrs_all=dirs_data['rrs_fil'][1:,5:].astype(float)
-    year_data=np.nanmean(rrs_all,axis=0)
+    year_data=np.nanmedian(rrs_all,axis=0)
     year_std= np.nanstd(rrs_all,axis=0)
     rrs_plot(wl,year_data,output_dir+"rrs/","alldays")
     
@@ -100,13 +100,13 @@ def plot_run (dir_input,today,site,sentinel_dir,web_dir)->str:
     
 
     rrs_today               = dirs_data['rrs_fil'][1:,5:].astype(float)[np.where(ID_int==today)]
-    todaymean               = np.nanmean(rrs_today,axis=0)
+    todaymedian               = np.nanmedian(rrs_today,axis=0)
     date                    = int(today)
     chl_today               = chl_temp
     today                   =str(today)
     today_normal_fech=datetime.strptime(today[0:4] + today[4:], "%Y%j").strftime("%d-%m-%Y")
-    rrs_plot(wl,todaymean,web_site,"today")
-    rrs_plot(wl,todaymean,output_dir+"rrs/",today_normal_fech)
+    rrs_plot(wl,todaymedian,web_site,"today")
+    rrs_plot(wl,todaymedian,output_dir+"rrs/",today_normal_fech)
     
     ##############################################################################    
     #ndci plot -7 days
@@ -190,9 +190,9 @@ def plot_run (dir_input,today,site,sentinel_dir,web_dir)->str:
             
             ndci_plot(days30,ndci_30_fil,sen_30,web_site,"ndci_30d",None)
             ndci_plot(days30,ndci_30_fil,sen_30,output_dir+"ndci/",str(normal_today_str)+"_30d",None)
-            todaymean               = np.nanmean(rrs_30,axis=0)
-            rrs_plot(wl,todaymean,web_site,"rrs_30d")
-            rrs_plot(wl,todaymean,output_dir+"rrs/",'30d')
+            todaymedian               = np.nanmedian(rrs_30,axis=0)
+            rrs_plot(wl,todaymedian,web_site,"rrs_30d")
+            rrs_plot(wl,todaymedian,output_dir+"rrs/",'30d')
         
         else:
             days30 = np.array([]) 
@@ -219,10 +219,10 @@ def plot_run (dir_input,today,site,sentinel_dir,web_dir)->str:
         ndci_plot(days30,ndci_30_fil,sen_30,web_site,"ndci_30d",None)
         ndci_plot(days30,ndci_30_fil,sen_30,output_dir+"ndci/",str(normal_today_str)+"_30d",None)
         
-        todaymean               = np.nanmean(rrs_30,axis=0)
+        todaymedian               = np.nanmedian(rrs_30,axis=0)
     
-        rrs_plot(wl,todaymean,web_site,"rrs_30d")
-        rrs_plot(wl,todaymean,output_dir+"rrs/",'30d')
+        rrs_plot(wl,todaymedian,web_site,"rrs_30d")
+        rrs_plot(wl,todaymedian,output_dir+"rrs/",'30d')
     
     ##############################################################################      
         #years
@@ -250,7 +250,7 @@ def plot_run (dir_input,today,site,sentinel_dir,web_dir)->str:
         year_pcu_std=dirs_data['pcustd_index_fil'][indice_year]
         year_chl_std=dirs_data['chlstd_index_fil'][indice_year]
         year_ndci_sen=dirs_data[site][indice_year] 
-        year_rrs                = np.nanmean(dirs_data['rrs_fil'][1:,5:].astype(float)[indice_year],axis=0)
+        year_rrs                = np.nanmedian(dirs_data['rrs_fil'][1:,5:].astype(float)[indice_year],axis=0)
         
   
         rrs_plot(wl,year_rrs,output_dir+"rrs/",str(y))
@@ -283,7 +283,7 @@ def plot_run (dir_input,today,site,sentinel_dir,web_dir)->str:
             temp=np.where(normal_month==month_numb[m])[0]
             rrs_temp=rrs[temp]
             days[month_name[m]]=normal_year[np.where(normal_month==month_numb[m])[0]]
-            month[month_name[m]]=np.nanmean(rrs_temp,axis=0)
+            month[month_name[m]]=np.nanmedian(rrs_temp,axis=0)
             
             month_pcu[month_name[m]]=year_pcu[temp]
             month_pcu_dif[month_name[m]]=year_pcu_dif[temp]

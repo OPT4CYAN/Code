@@ -160,8 +160,7 @@ def pre_run (input_dir,output_dir,temp_dir,site)->str:
                 with open(Today, 'a') as Today:
                     Today.writelines(appended)
             
-            Today                               = output_dir+ "rrs_Today" +".dat"
-            backup                           = output_dir+ "rrs_Yesterday" +".dat"
+            Today                               = output_dir+ "rrs" +".dat"
             title                               =["Id","Year","Doy","Zenith","Azimuth"] 
             #hacemos que wl haga su nombre a Rrs_ y el valor de wl
             name_rrs = [f"Rrs_{r}" for r in range(400, 901, 2)]
@@ -174,14 +173,9 @@ def pre_run (input_dir,output_dir,temp_dir,site)->str:
             
                     # Escribir los datos en una fila, con los valores de columna3 como columnas separadas por ;
                    archivo.write(columna1_str + ";"+columna2_str+"\n")
-                #crea backup
-                open(backup,'w')
-                shutil.copy(Today, backup)
             ########
             #si ya esta creado el archivo solo hayq ue guardadr la info 
             ####
-                
-            shutil.copy(Today, backup)
            
             for data in range(len(Rrs)):
                 columna2_str = ';'.join(map(str, Rrs[data,:]))

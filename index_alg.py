@@ -11,11 +11,11 @@ def index_alg(Rrs)->float:
 
     variables = ["PC_D", "PC_SY", "PC_S", "PC_RV", "PC_H1", "PC_H1b","PC_H3", "PC_W", "PC_L", "Chla_NDCI", "Chla_G08", "PC_Lu", 
     "PC_Br1", "PC_Br2", "PC_Br3", "chla_OC4Me", "CHL_m", "CHL2D_m", 
-    "CHL2C_m", "CHL_P", "CHL2_P", "NDCI"]
+    "CHL2C_m", "CHL_P", "CHL2_P", "NDCI", "MCI" , "PC_W16"]
     
     
     for var in variables:
-        global PC_D, PC_SY, PC_S, PC_RV, PC_H1, PC_H1b,PC_H3, PC_W, PC_L, Chla_NDCI, Chla_G08, PC_Lu, PC_Br1, PC_Br2, PC_Br3, chla_OC4Me, CHL_m, CHL2D_m, CHL2C_m, CHL_P, CHL2_P, NDCI
+        global PC_D, PC_SY, PC_S, PC_RV, PC_H1, PC_H1b,PC_H3, PC_W, PC_L, Chla_NDCI, Chla_G08, PC_Lu, PC_Br1, PC_Br2, PC_Br3, chla_OC4Me, CHL_m, CHL2D_m, CHL2C_m, CHL_P, CHL2_P, NDCI, MCI , PC_W16
         globals()[var]                              = np.zeros((0, 1))
     Rrsm                                            = Rrs/(0.52 +1.7*Rrs)
     all_var                                     ={}
@@ -76,7 +76,7 @@ def index_alg(Rrs)->float:
     
         #Mishra and Mishra "Normalized difference chlorophyll index: A novel model for remote estimation of chlorophyll-a concentration in turbid productive waters" RSE Volume 117, 15 February 2012, Pages 394-406
         #NCDI inverted (for correct representation *-1)
-        NDCI_tmp                                    = (np.interp(665,wl,Rrs[i,:])-np.interp(708,wl,Rrs[i,:]))/(np.interp(665,wl,Rrs[i,:])+np.interp(708,wl,Rrs[i,:]))
+        NDCI_tmp                                    = (np.interp(665,wl,Rrs[i,:])-np.interp(704,wl,Rrs[i,:]))/(np.interp(665,wl,Rrs[i,:])+np.interp(704,wl,Rrs[i,:]))
         #NDCI_tmp                                    = (np.nanmean(Rrs[i,125:140])-np.nanmean(Rrs[i,145:155]))/(np.nanmean(Rrs[i,125:140])+np.nanmean(Rrs[i,145:155]))
         NDCI                                        = np.append(NDCI, [NDCI_tmp])
         Chla_NDCI_tmp                               = 14.039 + 86.115*NDCI_tmp + 194.325*NDCI_tmp**2
@@ -115,6 +115,7 @@ def index_alg(Rrs)->float:
         BAIR                                        = np.interp(709,wl,Rrs[i,:]) - np.interp(665,wl,Rrs[i,:]) - (np.interp(885,wl,Rrs[i,:]) - np.interp(665,wl,Rrs[i,:]))/(885 - 665)*(709 - 665)   
         PCI                                         = -(np.interp(620,wl,Rrs[i,:]) - np.interp(560,wl,Rrs[i,:]) - (np.interp(665,wl,Rrs[i,:]) - np.interp(560,wl,Rrs[i,:]))/(665 - 560)*(620 - 560))  # Pitarch
         
+        
         if SICF < 0 and SIPF > 0 and BAIR > 0.002:
             RRS_MPH                                 = np.transpose(np.interp(681,wl,Rrs[i,:])),np.transpose(np.interp(709,wl,Rrs[i,:]))
             wl_MPH                                  = [681,709]
@@ -135,8 +136,32 @@ def index_alg(Rrs)->float:
         CHL_P                                       = np.append(CHL_P,CHL_P_tmp)
         CHL2_P_tmp                                  = 490.947*MPH**3 - 611074.*PCI*abs(PCI) + 3872.9*MPH
         CHL2_P                                      = np.append(CHL2_P,CHL2_P_tmp)
+        
+        
+        # indice de Monika Wozniak et al, 2016 Empirical Model for Phycocyanin Concentration Estimation as an Indicator of Cyanobacterial Bloom in the Optically Complex Coastal Waters of the Baltic Sea
+        k                                           = 0.98
+        l1                                          = -10.27
+        l2                                          = -1.82
+        
+        x1                                          = np.interp(625,wl,Rrs[i,:])/np.interp(650,wl,Rrs[i,:])
+        x2                                          = np.interp(620,wl,Rrs[i,:])/np.interp(710,wl,Rrs[i,:])
+        
+        PC_W16_tmp                                  = 10**k * x1**l1 * x2**l2
+        PC_W16                                      = np.append(PC_W16,[PC_W16_tmp])
+        
+        
+        
+        #### MCI similar a NDCI J. Gower et al,2005 Detection of intense plankton blooms using the 709 nm band of theMERIS imaging spectrometer
+        #este no lo usamos peor lo dejo por aqui
+        #fhl_tmp                                    = np.interp(678,wl,Rrs[i,:]) - (np.interp(667,wl,Rrs[i,:]) + ((np.interp(754,wl,Rrs[i,:]) - np.interp(667,wl,Rrs[i,:])))*(678 - 667)/(754 - 667))
+        
+        mci_tmp                                    = np.interp(709,wl,Rrs[i,:]) - (np.interp(681,wl,Rrs[i,:]) + ((np.interp(753,wl,Rrs[i,:]) - np.interp(681,wl,Rrs[i,:])))*(709 - 681)/(753 - 681))
+        MCI                                         = np.append(MCI,[mci_tmp])
+        
+        
+        
     var_data                                        = [PC_D, PC_SY, PC_S, PC_RV, PC_H1, PC_H1b, 
                  PC_H3, PC_W, PC_L, Chla_NDCI, Chla_G08, PC_Lu, 
                  PC_Br1, PC_Br2, PC_Br3, chla_OC4Me, CHL_m, CHL2D_m, 
-                 CHL2C_m, CHL_P, CHL2_P, NDCI]
+                 CHL2C_m, CHL_P, CHL2_P, NDCI, MCI, PC_W16]
     return var_data, variables

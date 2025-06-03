@@ -5,17 +5,17 @@ Created on Mon Oct 14 14:51:11 2024
 @author: gmart
 """
 import os
-os.chdir('C:/Users/gmart/Proyectos/opt4cyan/lib')
+os.chdir('C:/Users/gmart/Proyectos/opt4cyan_tmart/lib')
 from activate import activate
 import glob
 import shutil
 
-dir_ini = "C:/Users/gmart/Proyectos/opt4cyan/"
+dir_ini = "C:/Users/gmart/Proyectos/opt4cyan_tmart/"
 web_dir            ="C:/Users/gmart/Proyectos/Web_Control_Doñana/"
 site               = ['Lucio_del_Rey','Hondon_del_Burro','Fuente_del_Duque','Santa_Olalla']
 
 #iniciar proceso
-alerta= activate(dir_ini)
+alerta= activate(dir_ini,web_dir)
 
 #hacer para mover la imgen que detecta alerta 
 for f in site:

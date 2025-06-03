@@ -5,22 +5,16 @@ Created on Tue Aug 27 02:03:37 2024
 @author: Gonzalo Martínez Fornos
 gmail:gmartinez@icm.csic.es
 """
-import datetime 
+
 from download_map  import download_map
 from acolite_fun import acolite_fun
 import os
+from dateconverter import doytodate
 #funcion que activa el ndci desde sentinel
 def NDCI_batch(doy,root_dir)->float:
     
     download_dir                 = root_dir+"downloads/"
-
-    def dayofyear_to_date(dayofyear):
-        year            = int(dayofyear / 1000)
-        day             = int(dayofyear % 1000)
-        date            = datetime.datetime(year, 1, 1) + datetime.timedelta(days=int(day)-1)
-        return date.strftime("%Y-%m-%d")
-    
-    date = dayofyear_to_date(doy)
+    date = doytodate(doy)
     response = download_map(date,download_dir,'ndci')
     if response == "ok":
         # Decompress and acolite

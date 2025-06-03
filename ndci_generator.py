@@ -12,17 +12,14 @@ def ndci_generator(dir_nc:str,destination_folder:str,name:str,origin_folder:str)
 
     
     # environmental variables
-    site_name           = ['Santa_Olalla','Lucio_del_Rey','Hondon_del_Burro','Fuente_del_Duque']
     site_latitude       = [         36.98,          36.92,             37.00,             37.00]
     site_longitude      = [         -6.48,          -6.35,             -6.42,             -6.43]
-    site_heading        = [            45,              0,                 0,                45]
     
     
     # Abrir el archivo NetCDF en modo lectura
     dataset = netCDF4.Dataset(dir_nc, "r")
     
     # Obtener una lista de las variables disponibles en el archivo
-    variables = dataset.variables
     lon= dataset.variables["lon"]
     lat= dataset.variables["lat"]
     ndci= dataset.variables["ndci"]
@@ -113,35 +110,35 @@ def ndci_generator(dir_nc:str,destination_folder:str,name:str,origin_folder:str)
     dif_lat= abs(SantaOlalla_lat- SantaOlalla_lat_dif)
     dif_lon= abs(SantaOlalla_lon - SantaOlalla_lon_dif)
     dif= dif_lat+dif_lon
-    SantaOlalla=print("Santa_Olalla NDCI:", SantaOlalla_ndci)
+    print("Santa_Olalla NDCI:", SantaOlalla_ndci)
     if dif> 0.0018:
         SantaOlalla_ndci= "Nan"
     #Lucio del Rey
     dif_lat= abs(Lucio_lat- Lucio_lat_dif)
     dif_lon= abs(Lucio_lon - Lucio_lon_dif)
     dif= dif_lat+dif_lon
-    Lucio=print("Lucio_del_Rey NDCI:", Lucio_ndci)
+    print("Lucio_del_Rey NDCI:", Lucio_ndci)
     if dif> 0.0018:
         Lucio_ndci= "Nan"
     #Hondon del Burro
     dif_lat= abs(Burro_lat- Burro_lat_dif)
     dif_lon= abs(Burro_lon - Burro_lon_dif)
     dif= dif_lat+dif_lon
-    Hondon=print("Hondon_del_Burro NDCI:", Burro_ndci)
+    print("Hondon_del_Burro NDCI:", Burro_ndci)
     if dif> 0.0018:
         Burro_ndci= "Nan"
     #Duque
     dif_lat= abs(Duque_lat- Duque_lat_dif)
     dif_lon= abs(Duque_lon - Duque_lon_dif)
     dif= dif_lat+dif_lon
-    Duque=print("Fuente_del_Duque NDCI:", Duque_ndci)
+    print("Fuente_del_Duque NDCI:", Duque_ndci)
     if dif> 0.0018:
         Duque_ndci= "Nan"
         
-    SantaOlalla=print("Santa_Olalla NDCI:", SantaOlalla_ndci)
-    Lucio=print("Lucio_del_Rey NDCI:", Lucio_ndci)
-    Hondon=print("Hondon_del_Burro NDCI:", Burro_ndci)
-    Duque=print("Fuente_del_Duque NDCI:", Duque_ndci)
+    print("Santa_Olalla NDCI:", SantaOlalla_ndci)
+    print("Lucio_del_Rey NDCI:", Lucio_ndci)
+    print("Hondon_del_Burro NDCI:", Burro_ndci)
+    print("Fuente_del_Duque NDCI:", Duque_ndci)
     
     return SantaOlalla_ndci, Lucio_ndci, Burro_ndci, Duque_ndci, ndci_array
     

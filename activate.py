@@ -6,51 +6,20 @@ Created on Mon Sep 16 11:40:04 2024
 gmail:gmartinez@icm.csic.es
 """
 
-import pyproj
-import netCDF4
-from skimage import color
-from PIL import Image
-import subprocess
-import codecs
 import os
 import glob
 import numpy as np
 import shutil
-import rasterio
-import pandas as pd
-import datetime
-import zipfile
-import pathlib
-import math
-import json
-import requests
-import rasterio.warp
-import matplotlib.pyplot as plt
-from read_TRSdata import read_TRSdata 
-from sunposition import sunposition
-from datetime import datetime,timedelta
-from rasterio.transform import from_origin
 from pre_run import pre_run
 from index_run import index_run
 from water_batch import water_batch
 from NDCI_batch import NDCI_batch
 from plot_run import plot_run
 from renombr import renombr
-from download_map  import download_map
-from bands_fun import bands_fun
-from mndwi_fun import mndwi_fun
-from acolite_fun import acolite_fun
-from plots_def import rrs_plot, ndci_plot, pcu_plot, chl_pcu
-from Smoo_filter import Smoo_filter
-from dec_UTM import dec_UTM
-from ndci_generator import ndci_generator
-from map_ndci import map_ndci
-from index_alg import index_alg
-from matplotlib.ticker import (MultipleLocator)
 from ponderar import ponderar
 #funcion que activa todos los procesos 
 
-def activate(dir_ini):
+def activate(dir_ini,web_dir):
         
     input_dir          = dir_ini+ "input/"
     output_dir         = dir_ini+ "output/"
@@ -92,13 +61,14 @@ def activate(dir_ini):
     #now, detect the water with sentinel-2       
     water=water_batch(doy,sentinel_dir)
     #procesing the Acolite program for detect the NDCI
+    
     NDCI_batch(doy,sentinel_dir)
     print ("Ndci and water detection Complete "+str(doy))
     
     ###Date ndci water detection comparation ####
     ####usaremos ID de Santa_Olalla por que suele ser el que mas datos tiene####
     for f in site:
-        with open(sentinel_dir + "Today_mndwi.dat", "r") as sentinel_doc:
+        with open(sentinel_dir + "mndwi.dat", "r") as sentinel_doc:
             lines = sentinel_doc.readlines()
         
         # Dividir las líneas por ';' y convertirlas a un array de numpy
@@ -123,7 +93,7 @@ def activate(dir_ini):
             sen_temp = np.nanmean(data[ID_sen == x, :], axis=0)  # Media ignorando nan
             sen_data = np.vstack((sen_data, sen_temp))  # Añadir los datos filtrados
     
-        with open(output_dir +f+ "/rrs_Today.dat", "r") as rrs_doc:
+        with open(output_dir +f+ "/rrs.dat", "r") as rrs_doc:
             lines = rrs_doc.readlines()
         # Procesar las líneas y dividirlas por ';'
         linelist_rrs = [line.strip().split(";") for line in lines]
@@ -152,7 +122,7 @@ def activate(dir_ini):
         # Cargar el archivo Today_ndci.dat
         # Cargar el archivo Today_ndci.dat
         # Cargar el archivo Today_ndci.dat
-        with open(sentinel_dir + "Today_ndci.dat", "r") as ndci_doc:
+        with open(sentinel_dir + "ndci.dat", "r") as ndci_doc:
             lines = ndci_doc.readlines()
         
         # Dividir las líneas por ';' y convertirlas a un array de numpy
@@ -207,7 +177,7 @@ def activate(dir_ini):
         
     
     #abrimos los archivos para filtrar con los dias del agua 
-        with open(output_dir +f+ "/rrs_Today.dat", "r") as rrs_doc:
+        with open(output_dir +f+ "/rrs.dat", "r") as rrs_doc:
             lines = rrs_doc.readlines()
         # Procesar las líneas y dividirlas por ';'
         linelist_rrs = [line.strip().split(";") for line in lines]
@@ -222,7 +192,7 @@ def activate(dir_ini):
             data_mean_rrs = np.append(data_mean_rrs,[data_temp],axis=0)
         data_all_rrs=np.vstack((linelist_rrs[0,:], data_mean_rrs))
         np.savetxt(procesado +str(f)+'_rrs_all.dat', data_all_rrs, delimiter=';', fmt='%s')
-        with open(output_dir +f+ "/index_Today.dat", "r") as index_doc:
+        with open(output_dir +f+ "/index.dat", "r") as index_doc:
             lines = index_doc.readlines()
         # Procesar las líneas y dividirlas por ';'
         linelist_index = [line.strip().split(";") for line in lines]

@@ -5,18 +5,17 @@ Created on Tue Aug 27 02:03:37 2024
 @author: Gonzalo Martínez Fornos
 gmail:gmartinez@icm.csic.es
 """
+import datetime
 import zipfile
 import glob
 import os
 import shutil
 import subprocess
 from ndci_generator import ndci_generator
-from datetime import datetime,timedelta
+import tmart
 #funcion de creacion de archivos acolite, es algo pesado y va algo lento el proceso
 def acolite_fun (root_dir:str)->str:
 
-    
-    
     def descomprimir_archivo(archivo_zip, directorio_destino):
         with zipfile.ZipFile(archivo_zip, 'r') as zip_ref:
             zip_ref.extractall(directorio_destino)
@@ -31,6 +30,10 @@ def acolite_fun (root_dir:str)->str:
     for i in dir_zip:
         try:
             descomprimir_archivo(i, tmp)
+            #T-mart funtion
+            file_tmart  = glob.glob(tmp+"*.SAFE")[0]
+            tmart.AEC.run(file_tmart,'opt4cyan','Opt4cyan_2024',overwrite=True)
+            print ('tmart  Complete ####################################')
         
             # create folder
             dir_safe            = glob.glob(tmp+"/*")
@@ -40,7 +43,6 @@ def acolite_fun (root_dir:str)->str:
             dir_folder = os.path.join(output, name)
             os.makedirs(dir_folder)
             settings = dir_dest = output + "/" + name + "/Settings_file.txt"
-            new = open(settings, "w")
         
             # copy of .txt
             def mod_txt(arch_origen, dir_dest, remplazo):
@@ -60,9 +62,9 @@ def acolite_fun (root_dir:str)->str:
             mod_txt(arch_origen, dir_dest, remplazo)
                 
             #ACOLITE ACTIVATE
-            os.chdir("C:/Users/gmart/Proyectos/opt4cyan/acolite_py_win")
+            os.chdir("C:/Users/gmart/Proyectos/opt4cyan_tmart/acolite_py_win")
             #comando =  'cd /d C:\\Users\\doftdefault\\acolite_py_win && dist\\acolite\\acolite.exe --cli --settings="C:\\Users\\doftdefault\\Desktop\\Doñana\\OPT4CYAN\\Sentinel2\\Output\\'
-            comando =  'dist\\acolite\\acolite.exe --cli --settings="C:\\Users\\gmart\\Proyectos\\opt4cyan\\Sentinel\\Output\\'
+            comando =  'dist\\acolite\\acolite.exe --cli --settings="C:\\Users\\gmart\\Proyectos\\opt4cyan_tmart\\Sentinel\\Output\\'
             comando = comando + name + '\\Settings_file.txt"'
             subprocess.run(comando, shell=True)
             print("Acolite ok")
@@ -70,15 +72,15 @@ def acolite_fun (root_dir:str)->str:
             #Acolite data is created in this dir due to lack of permissions when executing the command
             #now we move them to the created folder
             
-            origin_folder = "C:/Users/gmart/Proyectos/opt4cyan/acolite_py_win/Output/"
+            origin_folder = "C:/Users/gmart/Proyectos/opt4cyan_tmart/acolite_py_win/Output/"
             destination_folder= output+"/" +name
-            arch = os.listdir(origin_folder)
+
             
             
             dir_nc= glob.glob(origin_folder + "/"+ "*L2W.nc")
             dir_nc= dir_nc[0]
             #esto es por si falla en algun momento acolite
-            data= name[41:49]
+            data= name[7:15]
             if len(dir_nc)==0:
                 print("FAIL:"+data)
             #Continua si no hay fallos
@@ -92,7 +94,7 @@ def acolite_fun (root_dir:str)->str:
             Hondon=ndci[2]
             Duque=ndci[3]
             
-            
+            from datetime import datetime
             fecha = datetime.strptime(data, "%Y%m%d")  
             doy                 = str(fecha.strftime('%Y'))+str(fecha.strftime('%j'))
             
@@ -104,20 +106,15 @@ def acolite_fun (root_dir:str)->str:
                    Today.writelines(appended)
                    print("Operación completada sin errores.")
         
-            Today               = root_dir + "Today_ndci.dat"
-            backup           = root_dir + "backup_ndci.dat"
+            Today               = root_dir + "ndci.dat"
             if len(glob.glob(Today))==0:
                 with open(Today, 'w') as archivo:
                     archivo.write("Doy;Santa_Olalla;Lucio_del_rey;Hondon_del_Burro;Fuente_Duque\n")
-                open(backup,'w')
-                shutil.copy(Today, backup) 
-            
-            shutil.copy(Today, backup)
                   
             appended = [ str(doy) + ";"+ str(SantaOlalla) + ";" + str(Lucio) +";" +str(Hondon) + ";"+str(Duque)+ "\n"]
             c_m_arch(Today,appended)
                 # Abrir el archivo actual en modo append (añadir al final)
-             
+            
             def eliminar_carpeta_safe(carpeta_safe):
                 try:
                     
@@ -129,12 +126,21 @@ def acolite_fun (root_dir:str)->str:
             carpeta_safe = "C://Users//gmart//Desktop//OPT4CYAN//acolite_py_win//Tmp//"
             eliminar_carpeta_safe(carpeta_safe)
             eliminar_carpeta_safe(tmp)
-        except Exception as e:
-            print("Error por no ser .zip ", e)
             
-            
-        for j in os.listdir(origin_folder):
-            os.remove(os.path.join(origin_folder,j))
+            for j in os.listdir(origin_folder):
+                os.remove(os.path.join(origin_folder,j))
+        except:
+            print("Saltoo.............#######################")
+            if len(glob.glob(tmp+'*.SAFE'))!=0:
+                   def eliminar_carpeta_safe(carpeta_safe):
+                       try:
+                           
+                           shutil.rmtree(carpeta_safe)
+                           print("Carpeta .SAFE eliminada:", carpeta_safe)
+                       except Exception as e:
+                           print("Error al eliminar la carpeta .SAFE:", e)
+                   eliminar_carpeta_safe(tmp)
+        
     
     
 
